@@ -3,13 +3,9 @@ import random
 
 def encrypt(key, filename):
     chunk_size = 64 * 1024
-    output_file = filename + ".crypt"
+    output_file = f"{filename}.crypt"
     filesize = str(os.path.getsize(filename)).zfill(16)
-    IV = ''
-
-    for i in range(16):
-        IV += chr(random.randint(0, 0xFF))
-
+    IV = ''.join(chr(random.randint(0, 0xFF)) for _ in range(16))
     with open(filename, 'rb') as input_file:
         with open(output_file, 'wb') as output_file:
             output_file.write(filesize.encode())
@@ -24,10 +20,7 @@ def encrypt(key, filename):
                 elif len(chunk) % 16 != 0:
                     chunk += b' ' * (16 - len(chunk) % 16)
 
-                xor_chunk = ''
-                for i in range(16):
-                    xor_chunk += chr(ord(chunk[i]) ^ ord(key[i]))
-
+                xor_chunk = ''.join(chr(ord(chunk[i]) ^ ord(key[i])) for i in range(16))
                 output_file.write(xor_chunk.encode())
 
 def decrypt(key, filename):
@@ -44,10 +37,7 @@ def decrypt(key, filename):
                 if len(chunk) == 0:
                     break
 
-                xor_chunk = ''
-                for i in range(16):
-                    xor_chunk += chr(ord(chunk[i]) ^ ord(key[i]))
-
+                xor_chunk = ''.join(chr(ord(chunk[i]) ^ ord(key[i])) for i in range(16))
                 output_file.write(xor_chunk.encode())
 
             output_file.truncate(filesize)
